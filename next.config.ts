@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // The button page must never be cached or prerendered — the slug gate and
-  // the "already pressed" state are decided per request.
   poweredByHeader: false,
+  // Lets the dev server be opened from a phone on the same network for real
+  // device testing. Development only — production is unaffected.
+  allowedDevOrigins: ["192.168.1.113"],
 };
 
 export default nextConfig;
