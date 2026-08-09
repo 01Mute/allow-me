@@ -2,12 +2,12 @@
  * Delivering a button press.
  *
  * Both channels are attempted on every press and neither can prevent the other:
- * KakaoTalk is the one the owner will actually see first, email is the safety
- * net for an expired token or a Kakao outage. Whatever happens, the press is
+ * Telegram is the one the owner will actually see first, email is the safety net
+ * for a revoked bot token or a Telegram outage. Whatever happens, the press is
  * written to the log so it can be recovered by hand.
  */
 
-import { sendKakaoMemo } from "./kakao";
+import { sendTelegramMessage } from "./telegram";
 import { sendPressEmail } from "./email";
 import { KEYS, redis } from "./redis";
 import { siteUrl } from "./env";
@@ -19,14 +19,14 @@ const PRESS_LOG_LIMIT = 200;
 export interface PressLogEntry {
   at: string;
   message: string;
-  kakao: "ok" | string;
+  telegram: "ok" | string;
   email: "ok" | string;
   ip?: string;
   userAgent?: string;
 }
 
 export interface NotifyResult {
-  kakao: "ok" | string;
+  telegram: "ok" | string;
   email: "ok" | string;
 }
 
@@ -44,7 +44,7 @@ export function formatKst(date: Date): string {
   return `${get("year")}-${get("month")}-${get("day")} ${get("hour")}:${get("minute")}`;
 }
 
-export function buildKakaoText(message: string, now: Date): string {
+export function buildTelegramText(message: string, now: Date): string {
   const quoted = message ? `\n\n"${message}"` : "";
   return `💌 버튼이 눌렸어요${quoted}\n\n${formatKst(now)}`;
 }
@@ -84,15 +84,21 @@ export async function notifyPress(
   const now = new Date();
   const message = rawMessage.trim().slice(0, MESSAGE_MAX_LENGTH);
 
-  const [kakaoResult, emailResult] = await Promise.allSettled([
-    sendKakaoMemo(buildKakaoText(message, now)),
+  const [telegramResult, emailResult] = await Promise.allSettled([
+    sendTelegramMessage(buildTelegramText(message, now)),
     sendPressEmail("💌 버튼이 눌렸습니다", buildEmailBody(message, now, meta)),
   ]);
 
   const result: NotifyResult = {
-    kakao: kakaoResult.status === "fulfilled" ? "ok" : describeFailure(kakaoResult.reason),
+    telegram:
+      telegramResult.status === "fulfilled" ? "ok" : describeFailure(telegramResult.reason),
     email: emailResult.status === "fulfilled" ? "ok" : describeFailure(emailResult.reason),
   };
+
+  // The press log is the primary record, but it lives in Redis — if Redis is
+  // the thing that broke, the runtime log is all that is left.
+  if (result.telegram !== "ok") console.error("Telegram delivery failed:", result.telegram);
+  if (result.email !== "ok") console.error("Email delivery failed:", result.email);
 
   await appendPressLog({ at: now.toISOString(), message, ...meta, ...result });
   return result;
