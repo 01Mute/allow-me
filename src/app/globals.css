@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #fdf9f6;
+  --color-surface: #ffffff;
+  --color-ink: #2e2926;
+  --color-muted: #8c807a;
+  --color-line: #ece3dd;
+  --color-accent: #d9606c;
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard",
+    "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+}
+
+/* `@theme` only emits the light palette; dark mode re-points the same tokens. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-canvas: #15120f;
+    --color-surface: #201b18;
+    --color-ink: #f3ece7;
+    --color-muted: #a2958d;
+    --color-line: #322a25;
+    --color-accent: #e8737e;
+  }
+}
+
+html {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  /* Keeps Korean phrases from breaking mid-word on narrow phones. */
+  word-break: keep-all;
+}
+
+/*
+ * Pulses the glow rather than the button itself: a target that keeps resizing
+ * is harder to tap accurately, and the halo reads just as alive.
+ */
+@keyframes breathe {
+  0%,
+  100% {
+    box-shadow:
+      0 14px 34px -10px color-mix(in srgb, var(--color-accent) 55%, transparent),
+      0 0 0 0 color-mix(in srgb, var(--color-accent) 32%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 14px 34px -10px color-mix(in srgb, var(--color-accent) 55%, transparent),
+      0 0 0 1.5rem color-mix(in srgb, var(--color-accent) 0%, transparent);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-breathe {
+  /* Also the resting shadow, so reduced-motion users still get the depth. */
+  box-shadow: 0 14px 34px -10px color-mix(in srgb, var(--color-accent) 55%, transparent);
+  animation: breathe 3.4s ease-in-out infinite;
+}
+
+.animate-rise {
+  animation: rise 0.5s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-breathe,
+  .animate-rise {
+    animation: none;
+  }
+}
