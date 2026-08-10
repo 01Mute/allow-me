@@ -2,10 +2,11 @@ node_modules/
 .next/
 out/
 build/
-.env
-.env.local
-.env*.local
 *.tsbuildinfo
 next-env.d.ts
 .vercel
 .DS_Store
+
+# Secrets. .env.example is the tracked template and must stay visible.
+.env*
+!.env.example
