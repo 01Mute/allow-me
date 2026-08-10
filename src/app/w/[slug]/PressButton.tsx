@@ -72,13 +72,13 @@ export default function PressButton({ slug }: { slug: string }) {
     const busy = stage === "sending";
     return (
       <section className="animate-rise">
-        <h1 className="text-ink text-2xl font-semibold tracking-tight">한마디 남겨줄래?</h1>
-        <p className="text-muted mt-3 text-[15px] leading-relaxed">
-          안 써도 괜찮아. 눌렀다는 것만으로 충분해.
-        </p>
+        {/* The only text left in this step, so it takes over as the heading. */}
+        <h1 className="text-muted text-[15px] leading-relaxed font-normal">
+          하고싶은 말이 있다면..
+        </h1>
 
         <form
-          className="mt-8"
+          className="mt-6"
           onSubmit={(event) => {
             event.preventDefault();
             if (!busy) void send();
@@ -97,7 +97,7 @@ export default function PressButton({ slug }: { slug: string }) {
             disabled={busy}
             value={message}
             onChange={(event) => setMessage(event.target.value)}
-            placeholder="( 비워둬도 돼 )"
+            placeholder="비워둬도 됨"
             className="border-line bg-surface text-ink placeholder:text-muted/60 focus:border-accent w-full rounded-2xl border px-5 py-4 text-[16px] outline-none transition-colors disabled:opacity-60"
           />
           <p className="text-muted mt-2 text-right text-xs tabular-nums">
@@ -125,7 +125,7 @@ export default function PressButton({ slug }: { slug: string }) {
           disabled={busy}
           className="text-muted mt-4 w-full py-2 text-sm underline underline-offset-4 disabled:opacity-40"
         >
-          잠깐만, 뒤로
+          조금만, 더
         </button>
       </section>
     );
@@ -133,24 +133,21 @@ export default function PressButton({ slug }: { slug: string }) {
 
   return (
     <section className="animate-rise text-center">
-      <p className="text-muted text-[15px]">언젠가, 마음이 생긴다면</p>
-      <h1 className="text-ink mt-3 text-2xl leading-snug font-semibold tracking-tight">
-        그때 이 버튼을 눌러줘
-      </h1>
+      {/* Now the only heading on the page, so it carries the h1. */}
+      <h1 className="text-muted text-[15px] font-normal">언젠가, 마음이 생긴다면</h1>
 
       <button
         type="button"
         onClick={() => setStage("writing")}
-        className="animate-breathe bg-accent mx-auto mt-14 flex size-44 items-center justify-center rounded-full text-[17px] font-semibold text-white transition-transform active:scale-95"
+        // The heart is the whole label, so the accessible name has to carry the
+        // meaning a screen reader would otherwise get from the text.
+        aria-label="마음이 생겼어"
+        className="animate-breathe bg-accent mx-auto mt-14 flex size-44 items-center justify-center rounded-full text-[4.5rem] leading-none text-white transition-transform active:scale-95"
       >
-        마음이 생겼어
+        <span aria-hidden>♥</span>
       </button>
 
-      <p className="text-muted mt-14 text-[13px] leading-relaxed">
-        누르면 나한테 바로 알림이 가.
-        <br />
-        서두르지 않아도 돼.
-      </p>
+      <p className="text-muted mt-14 text-[13px] leading-relaxed">서두르지 않아도 돼.</p>
     </section>
   );
 }
