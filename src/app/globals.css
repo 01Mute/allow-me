@@ -49,16 +49,6 @@ textarea {
 }
 
 /*
- * ── Liquid glass ──────────────────────────────────────────────────────────
- *
- * Glass only reads as glass when there is something behind it to refract, and
- * this page is a flat cream field. So the button is two layers: a soft colour
- * orb underneath, and a translucent pane over it that blurs and saturates
- * whatever it covers. The specular rim and the inner top highlight are what
- * sell the material — a plain translucent circle just looks faded.
- */
-
-/*
  * ── Plasma ────────────────────────────────────────────────────────────────
  *
  * Pink clouds drifting inside the heart button. Three of them on staggered,
@@ -94,14 +84,14 @@ textarea {
     color-mix(in srgb, var(--color-accent) 88%, white) 0%,
     transparent 68%
   );
-  animation: plasma-a 11s ease-in-out infinite alternate;
+  animation: plasma-a 5.5s ease-in-out infinite alternate;
 }
 
 .plasma-b {
   right: -8%;
   bottom: -12%;
   background: radial-gradient(circle, var(--color-accent) 0%, transparent 66%);
-  animation: plasma-b 14s ease-in-out infinite alternate;
+  animation: plasma-b 7s ease-in-out infinite alternate;
 }
 
 .plasma-c {
@@ -112,7 +102,7 @@ textarea {
     color-mix(in srgb, var(--color-accent) 62%, white) 0%,
     transparent 62%
   );
-  animation: plasma-c 9s ease-in-out infinite alternate;
+  animation: plasma-c 4.5s ease-in-out infinite alternate;
 }
 
 @keyframes plasma-a {
