@@ -96,7 +96,7 @@ export default function PressButton({ slug }: { slug: string }) {
             value={message}
             onChange={(event) => setMessage(event.target.value)}
             placeholder="비워둬도 됨"
-            className="border-line bg-surface text-ink placeholder:text-muted/60 focus:border-accent w-full rounded-2xl border px-5 py-4 text-[16px] outline-none transition-colors disabled:opacity-60"
+            className="glass-surface text-ink placeholder:text-muted w-full rounded-2xl px-5 py-4 text-[16px] outline-none transition-colors focus:border-white/55 disabled:opacity-60"
           />
           <p className="text-muted mt-2 text-right text-xs tabular-nums">
             {message.length} / {MESSAGE_MAX_LENGTH}
@@ -111,7 +111,7 @@ export default function PressButton({ slug }: { slug: string }) {
           <button
             type="submit"
             disabled={busy}
-            className="bg-accent mt-6 w-full rounded-full px-6 py-4 text-[17px] font-semibold text-white transition-opacity active:opacity-80 disabled:opacity-60"
+            className="glass-pane mt-6 w-full rounded-full px-6 py-4 text-[17px] font-semibold text-white transition-opacity active:opacity-80 disabled:opacity-60"
           >
             {busy ? "보내는 중…" : stage === "failed" ? "다시 보내기" : "보내기"}
           </button>
@@ -132,7 +132,7 @@ export default function PressButton({ slug }: { slug: string }) {
   return (
     <section className="animate-rise text-center">
       {/* The button is the whole screen now — no copy left to explain it. */}
-      <div className="relative mx-auto size-44 opacity-20">
+      <div className="relative mx-auto size-44 opacity-70">
         {/* What the glass refracts. Purely decorative. */}
         <span aria-hidden className="glass-orb-clip">
           <span className="glass-orb" />
