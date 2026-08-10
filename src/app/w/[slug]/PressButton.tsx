@@ -111,7 +111,7 @@ export default function PressButton({ slug }: { slug: string }) {
           <button
             type="submit"
             disabled={busy}
-            className="glass-pane glass-pill mt-6 w-full rounded-full px-6 py-4 text-[17px] font-semibold text-white transition-opacity active:opacity-80 disabled:opacity-60"
+            className="bg-accent mt-6 w-full rounded-full px-6 py-4 text-[17px] font-semibold text-white transition-opacity active:opacity-80 disabled:opacity-60"
           >
             {busy ? "보내는 중…" : stage === "failed" ? "다시 보내기" : "보내기"}
           </button>
@@ -132,7 +132,7 @@ export default function PressButton({ slug }: { slug: string }) {
   return (
     <section className="animate-rise text-center">
       {/* The button is the whole screen now — no copy left to explain it. */}
-      <div className="relative mx-auto size-44 opacity-30">
+      <div className="relative mx-auto size-44 opacity-20">
         {/* What the glass refracts. Purely decorative. */}
         <span aria-hidden className="glass-orb-clip">
           <span className="glass-orb" />
