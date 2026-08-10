@@ -59,36 +59,89 @@ textarea {
  */
 
 /*
- * Clips the orb to the button's circle. Without this the orb's blur escapes as
- * a fuzzy halo and the whole thing reads as a balloon rather than glass.
+ * ── Plasma ────────────────────────────────────────────────────────────────
+ *
+ * Pink clouds drifting inside the heart button. Three of them on staggered,
+ * unequal loops so they keep sliding in and out of each other instead of
+ * settling into a visible cycle. Clipped to the circle, then read through the
+ * glass above, which blurs them further.
  */
-.glass-orb-clip {
+.plasma-clip {
   position: absolute;
   inset: 0;
   border-radius: 9999px;
   overflow: hidden;
 }
 
-.glass-orb {
+.plasma-blob {
   position: absolute;
-  inset: -8%;
+  /* Small and only lightly blurred, so the three stay separable as they move.
+   * Bigger or softer and they merge into one flat glow. */
+  width: 58%;
+  height: 58%;
   border-radius: 9999px;
-  background: radial-gradient(
-    circle at 32% 26%,
-    color-mix(in srgb, var(--color-accent) 78%, white),
-    var(--color-accent) 58%,
-    color-mix(in srgb, var(--color-accent) 88%, black) 100%
-  );
-  filter: blur(8px);
-  /* Breathing lives on the orb, so the tap target itself never moves. */
-  animation: breathe 4s ease-in-out infinite;
+  filter: blur(15px);
+  /* On black, screen lets overlaps add up as light rather than stack as paint. */
+  mix-blend-mode: screen;
+  will-change: transform;
 }
 
-/*
- * Tuned for black: the highlights are far weaker than they would be on a light
- * page. White at 0.5 over black reads as a hard bright ring rather than a
- * catch of light.
- */
+.plasma-a {
+  top: -8%;
+  left: -6%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-accent) 88%, white) 0%,
+    transparent 68%
+  );
+  animation: plasma-a 11s ease-in-out infinite alternate;
+}
+
+.plasma-b {
+  right: -8%;
+  bottom: -12%;
+  background: radial-gradient(circle, var(--color-accent) 0%, transparent 66%);
+  animation: plasma-b 14s ease-in-out infinite alternate;
+}
+
+.plasma-c {
+  top: 16%;
+  right: 4%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-accent) 62%, white) 0%,
+    transparent 62%
+  );
+  animation: plasma-c 9s ease-in-out infinite alternate;
+}
+
+@keyframes plasma-a {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(58%, 44%) scale(1.25);
+  }
+}
+
+@keyframes plasma-b {
+  from {
+    transform: translate(0, 0) scale(1.15);
+  }
+  to {
+    transform: translate(-54%, -50%) scale(0.85);
+  }
+}
+
+@keyframes plasma-c {
+  from {
+    transform: translate(0, 0) scale(0.9);
+  }
+  to {
+    transform: translate(-46%, 52%) scale(1.3);
+  }
+}
+
 /*
  * The material itself. `glass-surface` is the plain pane — used on the input,
  * which cannot carry a ::after at all, being a replaced element.
@@ -112,14 +165,9 @@ textarea {
     inset 0 -6px 14px rgb(255 255 255 / 0.04);
 }
 
-/* `glass-pane` only adds the specular arc; the glow belongs to the heart. */
+/* `glass-pane` only adds the specular arc. */
 .glass-pane {
   position: relative;
-}
-
-/* Warm halo under the heart, and nothing else. */
-.heart-glow {
-  box-shadow: 0 14px 38px -12px color-mix(in srgb, var(--color-accent) 60%, transparent);
 }
 
 /* The bright arc near the top edge, where light would catch a curved surface. */
@@ -132,20 +180,6 @@ textarea {
   background: linear-gradient(to bottom, rgb(255 255 255 / 0.18), transparent);
   filter: blur(4px);
   pointer-events: none;
-}
-
-@keyframes breathe {
-  0%,
-  100% {
-    transform: scale(1);
-    /* Not lower than this: the white heart loses contrast on pale pink, and
-     * legibility beats the extra hint of translucency. */
-    opacity: 0.88;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
 }
 
 @keyframes rise {
@@ -164,7 +198,7 @@ textarea {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .glass-orb,
+  .plasma-blob,
   .animate-rise {
     animation: none;
   }

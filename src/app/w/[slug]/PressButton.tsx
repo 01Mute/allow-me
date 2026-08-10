@@ -132,10 +132,12 @@ export default function PressButton({ slug }: { slug: string }) {
   return (
     <section className="animate-rise text-center">
       {/* The button is the whole screen now — no copy left to explain it. */}
-      <div className="heart-glow relative mx-auto size-44 rounded-full opacity-80">
-        {/* What the glass refracts. Purely decorative. */}
-        <span aria-hidden className="glass-orb-clip">
-          <span className="glass-orb" />
+      <div className="relative mx-auto size-44">
+        {/* Pink clouds sealed inside the circle, read through the glass. */}
+        <span aria-hidden className="plasma-clip">
+          <span className="plasma-blob plasma-a" />
+          <span className="plasma-blob plasma-b" />
+          <span className="plasma-blob plasma-c" />
         </span>
         <button
           type="button"
@@ -145,9 +147,7 @@ export default function PressButton({ slug }: { slug: string }) {
           aria-label="마음이 생겼어"
           className="glass-pane flex size-full items-center justify-center rounded-full text-[4.5rem] leading-none text-white transition-transform active:scale-95"
         >
-          <span aria-hidden className="drop-shadow-[0_2px_6px_rgba(0,0,0,0.22)]">
-            ♥
-          </span>
+          <span aria-hidden>♥</span>
         </button>
       </div>
     </section>
