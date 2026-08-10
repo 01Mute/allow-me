@@ -1,33 +1,28 @@
 @import "tailwindcss";
 
+/*
+ * One committed look: black, always. No prefers-color-scheme branch — the page
+ * should land the same way on her phone as it does on mine, whatever either of
+ * us has the system set to.
+ */
 @theme {
-  --color-canvas: #fdf9f6;
-  --color-surface: #ffffff;
-  --color-ink: #2e2926;
-  --color-muted: #8c807a;
-  --color-line: #ece3dd;
-  --color-accent: #d9606c;
+  --color-canvas: #000000;
+  --color-surface: #141210;
+  --color-ink: #f4efeb;
+  --color-muted: #8b817b;
+  --color-line: #2a2522;
+  --color-accent: #e8737e;
 
   --font-sans:
     -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard",
     "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
 }
 
-/* `@theme` only emits the light palette; dark mode re-points the same tokens. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-canvas: #15120f;
-    --color-surface: #201b18;
-    --color-ink: #f3ece7;
-    --color-muted: #a2958d;
-    --color-line: #322a25;
-    --color-accent: #e8737e;
-  }
-}
-
 html {
   background-color: var(--color-canvas);
   color: var(--color-ink);
+  /* Renders the text caret, selection and any form chrome for a dark page. */
+  color-scheme: dark;
 }
 
 body {
@@ -88,24 +83,29 @@ textarea {
   animation: breathe 4s ease-in-out infinite;
 }
 
+/*
+ * Tuned for black: the highlights are far weaker than they would be on a light
+ * page. White at 0.5 over black reads as a hard bright ring rather than a
+ * catch of light.
+ */
 .glass-pane {
   position: relative;
   background: linear-gradient(
     148deg,
-    rgb(255 255 255 / 0.5) 0%,
-    rgb(255 255 255 / 0.12) 45%,
-    rgb(255 255 255 / 0.3) 100%
+    rgb(255 255 255 / 0.24) 0%,
+    rgb(255 255 255 / 0.05) 45%,
+    rgb(255 255 255 / 0.14) 100%
   );
   /* Standard property only — hand-written -webkit- prefixes make Lightning CSS
    * drop the unprefixed declaration, which kills the blur everywhere but
    * Safari. It adds the prefix itself from the browser targets. */
   backdrop-filter: blur(7px) saturate(180%);
-  border: 1px solid rgb(255 255 255 / 0.55);
+  border: 1px solid rgb(255 255 255 / 0.28);
   box-shadow:
-    inset 0 2px 2px rgb(255 255 255 / 0.8),
-    inset 0 -8px 16px rgb(255 255 255 / 0.22),
-    inset 0 0 28px rgb(255 255 255 / 0.14),
-    0 12px 30px -10px color-mix(in srgb, var(--color-accent) 55%, transparent);
+    inset 0 2px 2px rgb(255 255 255 / 0.38),
+    inset 0 -8px 16px rgb(255 255 255 / 0.1),
+    inset 0 0 28px rgb(255 255 255 / 0.07),
+    0 12px 34px -10px color-mix(in srgb, var(--color-accent) 60%, transparent);
 }
 
 /* The bright arc near the top edge, where light would catch a curved surface. */
@@ -115,42 +115,21 @@ textarea {
   inset: 7% 16% auto;
   height: 30%;
   border-radius: 9999px;
-  background: linear-gradient(to bottom, rgb(255 255 255 / 0.65), transparent);
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.32), transparent);
   filter: blur(4px);
   pointer-events: none;
 }
 
-/* On the flat cream background the pill has no orb, so it carries its own tint. */
+/* The pill has no orb behind it, so it carries its own tint. */
 .glass-pill {
   background:
     linear-gradient(
       160deg,
-      rgb(255 255 255 / 0.42) 0%,
-      rgb(255 255 255 / 0.08) 48%,
-      rgb(255 255 255 / 0.22) 100%
+      rgb(255 255 255 / 0.3) 0%,
+      rgb(255 255 255 / 0.06) 48%,
+      rgb(255 255 255 / 0.18) 100%
     ),
     var(--color-accent);
-}
-
-@media (prefers-color-scheme: dark) {
-  .glass-pane {
-    background: linear-gradient(
-      148deg,
-      rgb(255 255 255 / 0.26) 0%,
-      rgb(255 255 255 / 0.06) 45%,
-      rgb(255 255 255 / 0.16) 100%
-    );
-    border-color: rgb(255 255 255 / 0.3);
-    box-shadow:
-      inset 0 2px 2px rgb(255 255 255 / 0.4),
-      inset 0 -8px 16px rgb(255 255 255 / 0.12),
-      inset 0 0 28px rgb(255 255 255 / 0.08),
-      0 12px 30px -10px color-mix(in srgb, var(--color-accent) 60%, transparent);
-  }
-
-  .glass-pane::after {
-    background: linear-gradient(to bottom, rgb(255 255 255 / 0.34), transparent);
-  }
 }
 
 @keyframes breathe {
