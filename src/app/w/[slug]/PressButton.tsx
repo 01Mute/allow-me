@@ -61,8 +61,6 @@ export default function PressButton({ slug }: { slug: string }) {
         {/* The heading went away with the copy, so this line carries the h1. */}
         <h1 className="text-muted mt-6 text-[15px] leading-relaxed font-normal">
           알림이 갔습니다.
-          <br />
-          곧 연락할게.
         </h1>
       </section>
     );
@@ -133,10 +131,8 @@ export default function PressButton({ slug }: { slug: string }) {
 
   return (
     <section className="animate-rise text-center">
-      {/* Now the only heading on the page, so it carries the h1. */}
-      <h1 className="text-muted text-[15px] font-normal">언젠가, 마음이 생긴다면</h1>
-
-      <div className="relative mx-auto mt-14 size-44">
+      {/* The button is the whole screen now — no copy left to explain it. */}
+      <div className="relative mx-auto size-44 opacity-30">
         {/* What the glass refracts. Purely decorative. */}
         <span aria-hidden className="glass-orb-clip">
           <span className="glass-orb" />
@@ -154,8 +150,6 @@ export default function PressButton({ slug }: { slug: string }) {
           </span>
         </button>
       </div>
-
-      <p className="text-muted mt-14 text-[13px] leading-relaxed">서두르지 않아도 돼.</p>
     </section>
   );
 }
