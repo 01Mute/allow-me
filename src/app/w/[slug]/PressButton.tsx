@@ -132,7 +132,7 @@ export default function PressButton({ slug }: { slug: string }) {
   return (
     <section className="animate-rise text-center">
       {/* The button is the whole screen now — no copy left to explain it. */}
-      <div className="relative mx-auto size-44 opacity-70">
+      <div className="heart-glow relative mx-auto size-44 rounded-full opacity-80">
         {/* What the glass refracts. Purely decorative. */}
         <span aria-hidden className="glass-orb-clip">
           <span className="glass-orb" />
