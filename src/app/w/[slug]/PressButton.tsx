@@ -58,12 +58,12 @@ export default function PressButton({ slug }: { slug: string }) {
         <p className="text-5xl" aria-hidden>
           💌
         </p>
-        <h1 className="text-ink mt-6 text-2xl font-semibold tracking-tight">전해졌어.</h1>
-        <p className="text-muted mt-3 text-[15px] leading-relaxed">
-          방금 알림이 갔어.
+        {/* The heading went away with the copy, so this line carries the h1. */}
+        <h1 className="text-muted mt-6 text-[15px] leading-relaxed font-normal">
+          알림이 갔습니다.
           <br />
           곧 연락할게.
-        </p>
+        </h1>
       </section>
     );
   }
@@ -113,7 +113,7 @@ export default function PressButton({ slug }: { slug: string }) {
           <button
             type="submit"
             disabled={busy}
-            className="bg-accent mt-6 w-full rounded-full px-6 py-4 text-[17px] font-semibold text-white transition-opacity active:opacity-80 disabled:opacity-60"
+            className="glass-pane glass-pill mt-6 w-full rounded-full px-6 py-4 text-[17px] font-semibold text-white transition-opacity active:opacity-80 disabled:opacity-60"
           >
             {busy ? "보내는 중…" : stage === "failed" ? "다시 보내기" : "보내기"}
           </button>
@@ -136,16 +136,24 @@ export default function PressButton({ slug }: { slug: string }) {
       {/* Now the only heading on the page, so it carries the h1. */}
       <h1 className="text-muted text-[15px] font-normal">언젠가, 마음이 생긴다면</h1>
 
-      <button
-        type="button"
-        onClick={() => setStage("writing")}
-        // The heart is the whole label, so the accessible name has to carry the
-        // meaning a screen reader would otherwise get from the text.
-        aria-label="마음이 생겼어"
-        className="animate-breathe bg-accent mx-auto mt-14 flex size-44 items-center justify-center rounded-full text-[4.5rem] leading-none text-white transition-transform active:scale-95"
-      >
-        <span aria-hidden>♥</span>
-      </button>
+      <div className="relative mx-auto mt-14 size-44">
+        {/* What the glass refracts. Purely decorative. */}
+        <span aria-hidden className="glass-orb-clip">
+          <span className="glass-orb" />
+        </span>
+        <button
+          type="button"
+          onClick={() => setStage("writing")}
+          // The heart is the whole label, so the accessible name has to carry
+          // the meaning a screen reader would otherwise get from the text.
+          aria-label="마음이 생겼어"
+          className="glass-pane flex size-full items-center justify-center rounded-full text-[4.5rem] leading-none text-white transition-transform active:scale-95"
+        >
+          <span aria-hidden className="drop-shadow-[0_2px_6px_rgba(0,0,0,0.22)]">
+            ♥
+          </span>
+        </button>
+      </div>
 
       <p className="text-muted mt-14 text-[13px] leading-relaxed">서두르지 않아도 돼.</p>
     </section>
