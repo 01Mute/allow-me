@@ -2,10 +2,12 @@
  * Telling me when someone opens the link.
  *
  * This is ordinary server-side access logging — the same IP every web server
- * records on every request — routed to Telegram instead of a log file. It is
- * deliberately quieter than a press: Telegram only, no email, and heavily
- * filtered, because a notification that fires on every fetch is noise rather
- * than a signal.
+ * records on every request — routed to Telegram instead of a log file.
+ *
+ * Every real page open alerts, including the same browser coming straight back.
+ * The only things that stay silent are crawlers and any address in
+ * VISIT_IGNORE_IPS. Telegram only, no email: a missed visit costs nothing, a
+ * missed press costs everything.
  */
 
 import { optionalEnv } from "./env";
@@ -14,8 +16,6 @@ import { sendTelegramMessage } from "./telegram";
 import { formatKst } from "./notify";
 import { DEVICE_HEADER } from "./constants";
 
-/** One alert per address per this long, so refreshes don't fire a burst. */
-const THROTTLE_SECONDS = 30 * 60;
 const VISIT_LOG_LIMIT = 200;
 const USER_AGENT_MAX = 120;
 
@@ -122,6 +122,7 @@ export function buildVisitText(
 export interface VisitLogEntry extends VisitInfo {
   at: string;
   deviceVisits: number;
+  /** Whether Telegram actually accepted the alert, so a lost one is visible. */
   notified: boolean;
 }
 
@@ -136,32 +137,24 @@ export async function notifyVisit(info: VisitInfo): Promise<void> {
     const client = redis();
     const at = new Date();
 
-    // Counted on every real load, even when the alert itself is throttled.
     const totalVisits = await client.incr(KEYS.visitCount);
     const deviceVisits = info.deviceId ? await client.incr(KEYS.deviceCount(info.deviceId)) : 0;
 
-    // Throttle per browser, not per address. Keying on IP would silence a
-    // second device on the same wifi — which is the case worth hearing about.
-    const throttleKey = info.deviceId ? `d:${info.deviceId}` : info.ip;
-    const fresh = await client.set(KEYS.visitSeen(throttleKey), at.toISOString(), {
-      nx: true,
-      ex: THROTTLE_SECONDS,
-    });
+    // Every open alerts — no throttle. Sent before logging so the log can record
+    // whether it actually got through.
+    let notified = false;
+    try {
+      await sendTelegramMessage(buildVisitText(info, at, totalVisits, deviceVisits));
+      notified = true;
+    } catch (error) {
+      console.error("Visit alert could not be delivered", error);
+    }
 
     await client.lpush(
       KEYS.visitLog,
-      JSON.stringify({
-        ...info,
-        at: at.toISOString(),
-        deviceVisits,
-        notified: fresh !== null,
-      }),
+      JSON.stringify({ ...info, at: at.toISOString(), deviceVisits, notified }),
     );
     await client.ltrim(KEYS.visitLog, 0, VISIT_LOG_LIMIT - 1);
-
-    if (fresh !== null) {
-      await sendTelegramMessage(buildVisitText(info, at, totalVisits, deviceVisits));
-    }
   } catch (error) {
     console.error("Visit notification failed", error);
   }

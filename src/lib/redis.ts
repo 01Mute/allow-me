@@ -22,10 +22,8 @@ export const KEYS = {
   rateLimit: (ip: string) => `press:rate:${ip}`,
   /** LPUSH'd JSON entries, one per page open. */
   visitLog: "visit:log",
-  /** Every real page open, including the ones whose alert was throttled. */
+  /** Every real page open. */
   visitCount: "visit:count",
-  /** Present while an address is inside its alert throttle window. */
-  visitSeen: (ip: string) => `visit:seen:${ip}`,
   /** How many times one browser has opened the page. */
   deviceCount: (deviceId: string) => `visit:device:${deviceId}`,
 } as const;
