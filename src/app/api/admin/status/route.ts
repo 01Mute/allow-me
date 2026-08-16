@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { env, missingEnv, secretEquals, siteUrl } from "@/lib/env";
 import { clearPressLog, readPressLog } from "@/lib/notify";
+import { clearVisits, readVisitCount, readVisitLog } from "@/lib/visit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +16,8 @@ export async function GET(request: NextRequest): Promise<Response> {
 
   const missing = missingEnv();
   const presses = await readPressLog(50).catch(() => []);
+  const visits = await readVisitLog(50).catch(() => []);
+  const visitCount = await readVisitCount().catch(() => 0);
 
   return NextResponse.json({
     ok: missing.length === 0,
@@ -22,12 +25,15 @@ export async function GET(request: NextRequest): Promise<Response> {
     buttonUrl: `${siteUrl()}/w/${env("SECRET_SLUG")}`,
     pressCount: presses.length,
     presses,
+    visitCount,
+    visits,
   });
 }
 
-/** Wipes the press log — used to clear out test presses before going live. */
+/** Wipes the logs — used to clear out test traffic before going live. */
 export async function DELETE(request: NextRequest): Promise<Response> {
   if (!authorized(request)) return NextResponse.json({ ok: false }, { status: 404 });
   await clearPressLog();
-  return NextResponse.json({ ok: true, cleared: "press log" });
+  await clearVisits();
+  return NextResponse.json({ ok: true, cleared: ["press log", "visit log"] });
 }
