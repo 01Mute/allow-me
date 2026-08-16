@@ -55,6 +55,17 @@ export default function PressButton({ slug, reset }: { slug: string; reset: bool
     }
   }
 
+  /** Puts the button back. Only her browser holds this state, so only it can. */
+  function undo() {
+    try {
+      window.localStorage.removeItem(storageKey);
+    } catch {
+      /* Storage blocked — the stage change below still gets her the button. */
+    }
+    setMessage("");
+    setStage("idle");
+  }
+
   if (stage === "loading") {
     return <div aria-hidden className="h-64" />;
   }
@@ -69,6 +80,16 @@ export default function PressButton({ slug, reset }: { slug: string; reset: bool
         <h1 className="text-muted mt-6 text-[15px] leading-relaxed font-normal">
           알림이 갔습니다.
         </h1>
+
+        {/* Quiet and low, so it never competes with the moment — but always
+            there, so a mistap doesn't need a rescue link from me. */}
+        <button
+          type="button"
+          onClick={undo}
+          className="text-muted/60 mt-12 py-2 text-[13px] underline underline-offset-4"
+        >
+          실수로 눌렀어요
+        </button>
       </section>
     );
   }
