@@ -11,10 +11,16 @@ export const dynamic = "force-dynamic";
 
 export default async function ButtonPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { slug } = await params;
+  // ?reset=1 puts the button back for someone who already pressed it. The
+  // "already pressed" flag lives in her browser, so only her browser can
+  // clear it — this is the link that asks it to.
+  const reset = (await searchParams).reset === "1";
   // A wrong slug is a 404, not a "wrong password" — the page shouldn't confirm
   // that anything exists at this address.
   if (!secretEquals(slug, env("SECRET_SLUG"))) notFound();
@@ -29,7 +35,7 @@ export default async function ButtonPage({
     <>
       <TallyWall />
       <main className="relative z-10 mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-16">
-        <PressButton slug={slug} />
+        <PressButton slug={slug} reset={reset} />
       </main>
     </>
   );

@@ -5,7 +5,7 @@ import { MESSAGE_MAX_LENGTH } from "@/lib/constants";
 
 type Stage = "loading" | "idle" | "writing" | "sending" | "sent" | "failed";
 
-export default function PressButton({ slug }: { slug: string }) {
+export default function PressButton({ slug, reset }: { slug: string; reset: boolean }) {
   const [stage, setStage] = useState<Stage>("loading");
   const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -15,12 +15,19 @@ export default function PressButton({ slug }: { slug: string }) {
   useEffect(() => {
     let alreadyPressed = false;
     try {
-      alreadyPressed = window.localStorage.getItem(storageKey) !== null;
+      if (reset) {
+        window.localStorage.removeItem(storageKey);
+        // Drop ?reset=1 from the address bar so a later revisit — or a reload
+        // after she presses it for real — doesn't wipe the state again.
+        window.history.replaceState(null, "", window.location.pathname);
+      } else {
+        alreadyPressed = window.localStorage.getItem(storageKey) !== null;
+      }
     } catch {
       /* private mode or blocked storage — just show the button. */
     }
     setStage(alreadyPressed ? "sent" : "idle");
-  }, [storageKey]);
+  }, [storageKey, reset]);
 
   useEffect(() => {
     if (stage === "writing") inputRef.current?.focus();
