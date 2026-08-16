@@ -5,11 +5,35 @@ import { MESSAGE_MAX_LENGTH } from "@/lib/constants";
 
 type Stage = "loading" | "idle" | "writing" | "sending" | "sent" | "failed";
 
+/**
+ * Identifies one press attempt. `randomUUID` needs a secure context and is
+ * missing from some older in-app browsers, so there is a fallback — this only
+ * has to be unlikely to collide, not unguessable.
+ */
+function newPressId(): string {
+  try {
+    if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
+  } catch {
+    /* fall through */
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
 export default function PressButton({ slug, reset }: { slug: string; reset: boolean }) {
   const [stage, setStage] = useState<Stage>("loading");
   const [message, setMessage] = useState("");
+  // Minted per attempt so the server can drop a resend of *this* press without
+  // ever dropping a fresh one she meant.
+  const [pressId, setPressId] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const storageKey = `pressed:${slug}`;
+
+  /** Starts a new attempt: fresh id, fresh message. */
+  function beginPress() {
+    setPressId(newPressId());
+    setMessage("");
+    setStage("writing");
+  }
 
   // Read after mount so the server and client render the same first pass.
   useEffect(() => {
@@ -39,7 +63,7 @@ export default function PressButton({ slug, reset }: { slug: string; reset: bool
       const response = await fetch("/api/press", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug, message }),
+        body: JSON.stringify({ slug, message, pressId }),
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       try {
@@ -169,7 +193,7 @@ export default function PressButton({ slug, reset }: { slug: string; reset: bool
         </span>
         <button
           type="button"
-          onClick={() => setStage("writing")}
+          onClick={beginPress}
           // The heart is the whole label, so the accessible name has to carry
           // the meaning a screen reader would otherwise get from the text.
           aria-label="마음이 생겼어"

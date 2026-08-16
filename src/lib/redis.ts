@@ -16,8 +16,8 @@ export function redis(): Redis {
 export const KEYS = {
   /** LPUSH'd JSON entries, one per button press. */
   pressLog: "press:log",
-  /** Set for a short window after a press, to swallow double submissions. */
-  pressDedupe: "press:dedupe",
+  /** One key per submission id, so a resend of the same attempt is dropped. */
+  pressDedupe: (pressId: string) => `press:dedupe:${pressId}`,
   /** Per-IP sliding counter. */
   rateLimit: (ip: string) => `press:rate:${ip}`,
   /** LPUSH'd JSON entries, one per page open. */

@@ -21,14 +21,22 @@ export async function rateLimit(
 }
 
 /**
- * True the first time it is called within `windowSeconds`, false afterwards.
- * Collapses the double-taps and retries that a single press can produce.
+ * True the first time this exact submission is seen, false for a repeat of it.
+ *
+ * Keyed on an id the browser mints per press attempt, deliberately not on a
+ * time window: a window cannot tell a double-fire of one tap from a second tap
+ * the person actually meant — and after the undo button, pressing again a few
+ * seconds later is a real thing to do, not an accident to swallow.
+ *
+ * A retry of the *same* attempt keeps its id, so a press whose response got
+ * lost still can't be delivered twice.
  */
-export async function claimPressSlot(windowSeconds: number): Promise<boolean> {
+export async function claimPressSlot(pressId: string, ttlSeconds: number): Promise<boolean> {
+  if (!pressId) return true;
   try {
-    const claimed = await redis().set(KEYS.pressDedupe, Date.now(), {
+    const claimed = await redis().set(KEYS.pressDedupe(pressId), Date.now(), {
       nx: true,
-      ex: windowSeconds,
+      ex: ttlSeconds,
     });
     return claimed !== null;
   } catch (error) {
