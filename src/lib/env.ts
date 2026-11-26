@@ -26,8 +26,23 @@ export class MissingEnvError extends Error {
   }
 }
 
+/**
+ * Names the Vercel Marketplace Upstash integration injects instead of the
+ * UPSTASH_* ones. Either spelling works, so connecting Redis through the
+ * dashboard needs no manual renaming.
+ */
+const ENV_ALIASES: Partial<Record<RequiredEnvName, string>> = {
+  UPSTASH_REDIS_REST_URL: "KV_REST_API_URL",
+  UPSTASH_REDIS_REST_TOKEN: "KV_REST_API_TOKEN",
+};
+
+function readEnv(name: RequiredEnvName): string | undefined {
+  const alias = ENV_ALIASES[name];
+  return process.env[name] || (alias ? process.env[alias] : undefined);
+}
+
 export function env(name: RequiredEnvName): string {
-  const value = process.env[name];
+  const value = readEnv(name);
   if (!value) throw new MissingEnvError(name);
   return value;
 }
@@ -38,7 +53,7 @@ export function optionalEnv(name: string, fallback: string): string {
 
 /** Names of required variables that are not set. Used by /api/admin/status. */
 export function missingEnv(): RequiredEnvName[] {
-  return REQUIRED_ENV.filter((name) => !process.env[name]);
+  return REQUIRED_ENV.filter((name) => !readEnv(name));
 }
 
 export function emailFrom(): string {

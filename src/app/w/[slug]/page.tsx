@@ -34,6 +34,8 @@ export default async function ButtonPage({
   return (
     <>
       <TallyWall />
+      <div aria-hidden className="vignette" />
+      <div aria-hidden className="grain" />
       <main className="relative z-10 mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-16">
         <PressButton slug={slug} reset={reset} />
       </main>

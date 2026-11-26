@@ -70,7 +70,7 @@ export default function TallyWall() {
       aria-hidden
       className="pointer-events-none fixed inset-0 overflow-hidden text-white/[0.13]"
     >
-      <div className="flex flex-wrap justify-center gap-x-4 gap-y-6 px-6 pt-14">
+      <div className="tally-fade flex flex-wrap justify-center gap-x-4 gap-y-6 px-6 pt-14">
         {groups.map((count, index) => (
           <TallyGroup key={index} count={count} seed={index * 3.7 + 1} />
         ))}
