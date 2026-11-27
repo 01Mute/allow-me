@@ -54,7 +54,7 @@ function TallyGroup({ count, seed }: { count: number; seed: number }) {
       viewBox="0 0 34 40"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2.2"
+      strokeWidth="1.8"
       strokeLinecap="round"
     >
       {strokes}
@@ -68,9 +68,9 @@ export default function TallyWall() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 overflow-hidden text-white/[0.13]"
+      className="tally-fade pointer-events-none fixed inset-0 z-[1] overflow-hidden text-[#5b4f52]/[0.22]"
     >
-      <div className="tally-fade flex flex-wrap justify-center gap-x-4 gap-y-6 px-6 pt-14">
+      <div className="flex flex-wrap justify-center gap-x-4 gap-y-6 px-6 pt-14">
         {groups.map((count, index) => (
           <TallyGroup key={index} count={count} seed={index * 3.7 + 1} />
         ))}

@@ -1,5 +1,16 @@
 import type { Metadata, Viewport } from "next";
+import { Gaegu } from "next/font/google";
 import "./globals.css";
+
+// Soft Korean handwriting for the few lines of copy, like pencil on paper.
+// Korean glyphs are served by unicode-range slices, so nothing to preload.
+const hand = Gaegu({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  preload: false,
+  variable: "--font-hand",
+});
 
 export const metadata: Metadata = {
   title: " ",
@@ -11,14 +22,14 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  // The page is black in every theme, so the browser chrome should be too.
-  themeColor: "#000000",
-  colorScheme: "dark",
+  // Matches the paper, so the browser chrome blends in.
+  themeColor: "#fbf8f3",
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={hand.variable}>
       <body className="bg-canvas text-ink min-h-dvh">{children}</body>
     </html>
   );
